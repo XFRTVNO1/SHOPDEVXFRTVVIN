@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ระบบโค้ดเกมสวยๆ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+  * {
+    box-sizing: border-box;
+    margin: 0; padding: 0;
+  }
+  body, html {
+    height: 100%;
+    font-family: 'Kanit', sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: #222;
+  }
+  .container {
+    background: #fff;
+    border-radius: 16px;
+    width: 400px;
+    max-width: 100%;
+    padding: 30px 35px 35px;
+    box-shadow: 0 10px 40px rgba(118, 75, 162, 0.3);
+    animation: fadeIn 0.5s ease forwards;
+  }
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(15px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+
+  h2 {
+    color: #764ba2;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 24px;
+    font-size: 1.8rem;
+  }
+
+  input[type="email"],
+  input[type="password"],
+  input[type="text"] {
+    width: 100%;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+    border: 2px solid #ddd;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  input[type="text"]:focus {
+    outline: none;
+    border-color: #764ba2;
+  }
+
+  button {
+    width: 100%;
+    padding: 14px;
+    background: #764ba2;
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(118, 75, 162, 0.5);
+    transition: background 0.3s ease;
+    margin-bottom: 16px;
+  }
+  button:hover {
+    background: #5b357f;
+  }
+  button:active {
+    transform: scale(0.98);
+  }
+
+  .logout-btn {
+    background: #e64a19;
+    box-shadow: 0 6px 20px rgba(230, 74, 25, 0.5);
+    margin-top: 12px;
+  }
+  .logout-btn:hover {
+    background: #b43a14;
+  }
+
+  .welcome {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 24px;
+    color: #444;
+    text-align: center;
+  }
+
+  .code-result {
+    background: #f3e8ff;
+    border-left: 6px solid #764ba2;
+    padding: 16px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    color: #5c3a78;
+    margin-bottom: 20px;
+    white-space: pre-line;
+  }
+
+  #history {
+    max-height: 140px;
+    overflow-y: auto;
+    background: #faf7ff;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    color: #4a3470;
+  }
+  .history-item {
+    margin-bottom: 8px;
+  }
+
+  .menu {
+    margin-top: 16px;
+    font-size: 0.95rem;
+    color: #555;
+  }
+  .menu h3 {
+    color: #764ba2;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .menu ul {
+    padding-left: 20px;
+    margin-bottom: 12px;
+  }
+  .menu a {
+    color: #764ba2;
+    text-decoration: none;
+  }
+  .menu a:hover {
+    text-decoration: underline;
+  }
+
+  .hidden {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- หน้าเข้าสู่ระบบ / สมัครสมาชิก -->
+<div class="container" id="auth-section">
+  <h2>เข้าสู่ระบบ / สมัครสมาชิก</h2>
+  <input type="email" id="email" placeholder="อีเมล" autocomplete="username" />
+  <input type="password" id="password" placeholder="รหัสผ่าน (8 ตัวขึ้นไป)" autocomplete="current-password" />
+  <button onclick="register()">สมัครสมาชิก</button>
+  <button onclick="login()">เข้าสู่ระบบ</button>
+</div>
+
+<!-- หน้าเมนูหลัก -->
+<div class="container hidden" id="main-section">
+  <h2>ระบบใส่โค้ดเกม</h2>
+  <p class="welcome">สวัสดี, <span id="user-email"></span></p>
+
+  <input type="text" id="game-code" placeholder="กรอกโค้ดเกมที่นี่" autocomplete="off" />
+  <button onclick="redeemCode()">ส่งโค้ด</button>
+
+  <div id="code-result" class="code-result hidden"></div>
+
+  <h3>ประวัติการใช้โค้ด</h3>
+  <div id="history"></div>
+
+  <div class="menu">
+    <h3>ร้านค้าแนะนำ</h3>
+    <ul>
+      <li><a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">ใส่ชื่อร้าน้ค้าโปรโมท1</a></li>
+      <li><a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">ใส่ชื่อร้าน้ค้าโปรโมท2</a></li>
+    </ul>
+    <button onclick="window.open('https://www.facebook.com/','_blank')">ดู Facebook Page</button>
+  </div>
+
+  <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
+</div>
+
+<script>
+  // กำหนดโค้ดพร้อมรหัสผ่านที่ผูกกับโค้ดนั้น ๆ
+  const availableCodes = {
+    "ชื่อโค้ด": "รหัสที่ได้",
+    "abc123": "passABC123",
+    "game999": "passGAME999"
+  };
+
+  // ดึงโค้ดที่ใช้ไปแล้วจาก localStorage
+  let usedCodes = JSON.parse(localStorage.getItem("usedCodes") || "[]");
+
+  function isValidEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+
+  function register() {
+    const email = document.getElementById("email").value.trim();
+    const pass = document.getElementById("password").value.trim();
+
+    if (!isValidEmail(email)) return alert("รูปแบบอีเมลไม่ถูกต้อง");
+    if (pass.length < 8) return alert("รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร");
+    if (!email || !pass) return alert("กรอกข้อมูลให้ครบ");
+
+    let users = JSON.parse(localStorage.getItem("users") || "{}");
+    if (users[email]) return alert("มีผู้ใช้งานนี้แล้ว");
+
+    users[email] = pass;
+    localStorage.setItem("users", JSON.stringify(users));
+    alert("สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบ");
+  }
+
+  function login() {
+    const email = document.getElementById("email").value.trim();
+    const pass = document.getElementById("password").value.trim();
+
+    if (!isValidEmail(email)) return alert("รูปแบบอีเมลไม่ถูกต้อง");
+    if (pass.length < 8) return alert("รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร");
+
+    let users = JSON.parse(localStorage.getItem("users") || "{}");
+    if (users[email] === pass) {
+      localStorage.setItem("currentUser", email);
+      showMain();
+    } else {
+      alert("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("currentUser");
+    document.getElementById("main-section").classList.add("hidden");
+    document.getElementById("auth-section").classList.remove("hidden");
+    clearInputs();
+    clearCodeResult();
+  }
+
+  function showAuth() {
+    document.getElementById("auth-section").classList.remove("hidden");
+    document.getElementById("main-section").classList.add("hidden");
+  }
+
+  function showMain() {
+    const email = localStorage.getItem("currentUser");
+    if (!email) {
+      alert("กรุณาเข้าสู่ระบบก่อน");
+      showAuth();
+      return;
+    }
+    document.getElementById("user-email").textContent = email;
+    document.getElementById("auth-section").classList.add("hidden");
+    document.getElementById("main-section").classList.remove("hidden");
+    clearInputs();
+    clearCodeResult();
+    renderHistory();
+  }
+
+  function clearInputs() {
+    document.getElementById("email").value = "";
+    document.getElementById("password").value = "";
+    document.getElementById("game-code").value = "";
+  }
+
+  function clearCodeResult() {
+    const cr = document.getElementById("code-result");
+    cr.textContent = "";
+    cr.classList.add("hidden");
+  }
+
+  // บันทึกประวัติการใช้โค้ด
+  function saveHistory(code) {
+    const email = localStorage.getItem("currentUser");
+    let history = JSON.parse(localStorage.getItem("history_" + email) || "[]");
+    history.push({ code: code, time: new Date().toLocaleString() });
+    localStorage.setItem("history_" + email, JSON.stringify(history));
+    renderHistory();
+  }
+
+  // แสดงประวัติ
+  function renderHistory() {
+    const email = localStorage.getItem("currentUser");
+    let history = JSON.parse(localStorage.getItem("history_" + email) || "[]");
+    const historyDiv = document.getElementById("history");
+    historyDiv.innerHTML = "";
+
+    if (history.length === 0) {
+      historyDiv.textContent = "ยังไม่มีการใช้โค้ด";
+      return;
+    }
+
+    history.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "history-item";
+      div.textContent = `โค้ด: ${item.code} เวลา: ${item.time}`;
+      historyDiv.appendChild(div);
+    });
+  }
+
+  function redeemCode() {
+    if (!localStorage.getItem("currentUser")) {
+      alert("กรุณาเข้าสู่ระบบก่อนใช้งานฟีเจอร์นี้");
+      showAuth();
+      return;
+    }
+    clearCodeResult();
+    const codeInput = document.getElementById("game-code");
+    const code = codeInput.value.trim().toLowerCase();
+
+    if (!code) return alert("กรุณากรอกโค้ด");
+
+    if (!(code in availableCodes)) {
+      return alert("โค้ดไม่ถูกต้อง");
+    }
+    if (usedCodes.includes(code)) {
+      return alert("โค้ดนี้ถูกใช้ไปแล้ว");
+    }
+
+    usedCodes.push(code);
+    localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
+    saveHistory(code);
+
+    const email = localStorage.getItem("currentUser");
+    const passForCode = availableCodes[code];
+
+    const resultDiv = document.getElementById("code-result");
+    resultDiv.textContent = `ใช้โค้ดสำเร็จ!\nชื่อผู้ใช้: ${email}\nรหัสผ่าน: ${passForCode}`;
+    resultDiv.classList.remove("hidden");
+
+    codeInput.value = "";
+  }
+
+  // โหลดตอนเริ่ม
+  window.onload = () => {
+    if (localStorage.getItem("currentUser")) {
+      showMain();
+    } else {
+      showAuth();
+    }
+  };
+</script>
+
+</body>
+</html>
