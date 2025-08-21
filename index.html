@@ -1,349 +1,285 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ระบบโค้ดเกมสวยๆ</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>เซอร์ไพรส์รัก</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
-  * {
-    box-sizing: border-box;
-    margin: 0; padding: 0;
+  :root{
+    --pink:#ff5ca2;
+    --deep:#b21f58;
+    --muted:#6b6b6b;
+    --bg1:#ffe6eb;
+    --bg2:#f3e6ff;
   }
-  body, html {
-    height: 100%;
-    font-family: 'Kanit', sans-serif;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    color: #222;
-  }
-  .container {
-    background: #fff;
-    border-radius: 16px;
-    width: 400px;
-    max-width: 100%;
-    padding: 30px 35px 35px;
-    box-shadow: 0 10px 40px rgba(118, 75, 162, 0.3);
-    animation: fadeIn 0.5s ease forwards;
-  }
-  @keyframes fadeIn {
-    from {opacity: 0; transform: translateY(15px);}
-    to {opacity: 1; transform: translateY(0);}
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Prompt,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  body{
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
   }
 
-  h2 {
-    color: #764ba2;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 24px;
-    font-size: 1.8rem;
-  }
+  /* Card / gate */
+  .card{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-radius:18px;padding:26px;box-shadow:0 18px 60px rgba(0,0,0,.12);max-width:720px;width:92%;text-align:center}
+  h1{margin:0;font-size:22px;color:var(--deep)}
+  p.muted{color:var(--muted);margin-top:8px}
+  input[type=text]{width:100%;padding:12px;border-radius:12px;border:1px solid #f0dfe6;font-size:16px;margin-top:14px;text-align:center}
+  button.btn{margin-top:14px;padding:12px 20px;border-radius:12px;background:var(--pink);color:#fff;border:0;cursor:pointer;font-weight:700}
+  .error{color:#d6336c;margin-top:10px;font-weight:700}
+  .messages{margin-top:22px;max-height:60vh;overflow:auto;padding-right:8px}
+  .msg{font-size:20px;color:var(--deep);font-weight:800;margin:10px 0;opacity:0;transform:translateY(8px);transition:all .45s ease}
+  .msg.show{opacity:1;transform:translateY(0)}
 
-  input[type="email"],
-  input[type="password"],
-  input[type="text"] {
-    width: 100%;
-    padding: 14px 18px;
-    margin-bottom: 18px;
-    border-radius: 12px;
-    border: 2px solid #ddd;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-  }
-  input[type="email"]:focus,
-  input[type="password"]:focus,
-  input[type="text"]:focus {
-    outline: none;
-    border-color: #764ba2;
-  }
+  /* shake */
+  .shake{animation:shake 520ms cubic-bezier(.36,.07,.19,.97) both}
+  @keyframes shake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
 
-  button {
-    width: 100%;
-    padding: 14px;
-    background: #764ba2;
-    border: none;
-    border-radius: 12px;
-    color: #fff;
-    font-weight: 600;
-    font-size: 1.1rem;
-    cursor: pointer;
-    box-shadow: 0 6px 20px rgba(118, 75, 162, 0.5);
-    transition: background 0.3s ease;
-    margin-bottom: 16px;
-  }
-  button:hover {
-    background: #5b357f;
-  }
-  button:active {
-    transform: scale(0.98);
-  }
+  /* FX global appended */
+  .fx-heart{position:fixed;top:-8vh;user-select:none;pointer-events:none;color:#ff4d88;animation:fall linear forwards}
+  @keyframes fall{0%{transform:translateY(-10vh) rotate(0);opacity:0}10%{opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+  .fx-confetti{position:fixed;top:-5vh;user-select:none;pointer-events:none;border-radius:3px;background:linear-gradient(180deg,#ff7ca3,#c7b9ff);animation:confetti linear forwards}
+  @keyframes confetti{to{transform:translateY(115vh) rotate(720deg);opacity:.9}}
+  .fx-burst{position:fixed;left:50%;top:45%;transform:translate(-50%,-50%);user-select:none;pointer-events:none;animation:burst 1.05s ease-out forwards}
+  @keyframes burst{0%{opacity:0;transform:translate(-50%,-50%) scale(.2)}60%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--tx,0px)),calc(-50% + var(--ty,0px))) scale(1.2)}}
 
-  .logout-btn {
-    background: #e64a19;
-    box-shadow: 0 6px 20px rgba(230, 74, 25, 0.5);
-    margin-top: 12px;
-  }
-  .logout-btn:hover {
-    background: #b43a14;
-  }
+  /* Loading screen */
+  .loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:30px}
+  .spinner{width:84px;height:84px;border-radius:50%;position:relative}
+  .spinner:before,.spinner:after{content:'';position:absolute;inset:0;border-radius:50%}
+  .spinner:before{box-shadow:0 4px 24px rgba(178,31,88,.12);background:conic-gradient(var(--pink), #ffd6ec, #c7b9ff);}
+  .progress{width:220px;height:10px;border-radius:999px;background:rgba(255,255,255,.6);overflow:hidden;box-shadow:inset 0 -2px 6px rgba(0,0,0,.04)}
+  .progress > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--pink),#ffd6ec);transition:width .25s linear}
 
-  .welcome {
-    font-weight: 600;
-    font-size: 1rem;
-    margin-bottom: 24px;
-    color: #444;
-    text-align: center;
-  }
-
-  .code-result {
-    background: #f3e8ff;
-    border-left: 6px solid #764ba2;
-    padding: 16px 20px;
-    border-radius: 12px;
-    font-weight: 700;
-    color: #5c3a78;
-    margin-bottom: 20px;
-    white-space: pre-line;
-  }
-
-  #history {
-    max-height: 140px;
-    overflow-y: auto;
-    background: #faf7ff;
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 0.9rem;
-    color: #4a3470;
-  }
-  .history-item {
-    margin-bottom: 8px;
-  }
-
-  .menu {
-    margin-top: 16px;
-    font-size: 0.95rem;
-    color: #555;
-  }
-  .menu h3 {
-    color: #764ba2;
-    margin-bottom: 10px;
-    font-weight: 600;
-  }
-  .menu ul {
-    padding-left: 20px;
-    margin-bottom: 12px;
-  }
-  .menu a {
-    color: #764ba2;
-    text-decoration: none;
-  }
-  .menu a:hover {
-    text-decoration: underline;
-  }
-
-  .hidden {
-    display: none;
-  }
+  /* Responsive */
+  @media (max-width:480px){.card{padding:18px}}
 </style>
 </head>
 <body>
+  <!-- Stage: Gate -->
+  <main id="gate" class="card" role="main" aria-labelledby="title">
+    <h1 id="title">กรอกรหัสลับ</h1>
+    <p class="muted">กรอกโค้ดส่วนตัวแล้วกด \"เปิด\" เพื่อเซอร์ไพรส์</p>
 
-<!-- หน้าเข้าสู่ระบบ / สมัครสมาชิก -->
-<div class="container" id="auth-section">
-  <h2>เข้าสู่ระบบ / สมัครสมาชิก</h2>
-  <input type="email" id="email" placeholder="อีเมล" autocomplete="username" />
-  <input type="password" id="password" placeholder="รหัสผ่าน (8 ตัวขึ้นไป)" autocomplete="current-password" />
-  <button onclick="register()">สมัครสมาชิก</button>
-  <button onclick="login()">เข้าสู่ระบบ</button>
-</div>
+    <input id="codeInput" type="text" inputmode="numeric" placeholder="พิมพ์รหัสของเรา" aria-label="รหัสลับ" />
+    <button id="openBtn" class="btn" aria-controls="loading">เปิด</button>
+    <div id="error" class="error" role="alert" aria-live="assertive" style="display:none"></div>
+  </main>
 
-<!-- หน้าเมนูหลัก -->
-<div class="container hidden" id="main-section">
-  <h2>ระบบใส่โค้ดเกม</h2>
-  <p class="welcome">สวัสดี, <span id="user-email"></span></p>
+  <!-- Stage: Loading (hidden initially) -->
+  <main id="loading" class="card" style="display:none">
+    <div class="loading-wrap" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <div style="text-align:center">
+        <div style="font-weight:800;color:var(--deep);font-size:18px">กำลังเปิดของขวัญ...</div>
+        <div style="color:var(--muted);margin-top:6px">รอสักครู่ แล้วจะมีเซอร์ไพรส์โผล่</div>
+      </div>
+      <div class="progress" aria-hidden="true" style="margin-top:6px">
+        <i id="progressBar" style="width:0%"></i>
+      </div>
+    </div>
+  </main>
 
-  <input type="text" id="game-code" placeholder="กรอกโค้ดเกมที่นี่" autocomplete="off" />
-  <button onclick="redeemCode()">ส่งโค้ด</button>
-
-  <div id="code-result" class="code-result hidden"></div>
-
-  <h3>ประวัติการใช้โค้ด</h3>
-  <div id="history"></div>
-
-  <div class="menu">
-    <h3>ร้านค้าแนะนำ</h3>
-    <ul>
-      <li><a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">ใส่ชื่อร้าน้ค้าโปรโมท1</a></li>
-      <li><a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">ใส่ชื่อร้าน้ค้าโปรโมท2</a></li>
-    </ul>
-    <button onclick="window.open('https://www.facebook.com/','_blank')">ดู Facebook Page</button>
-  </div>
-
-  <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
-</div>
+  <!-- Stage: Reveal (hidden initially) -->
+  <main id="reveal" class="card" style="display:none;max-height:90vh;overflow:auto">
+    <h1 style="font-size:24px;margin:0;color:var(--deep)">ข้อความจากใจ</h1>
+    <p class="muted" style="margin-top:8px">ขอบคุณที่เป็นคนพิเศษ — ข้อความจะโผล่มาทีละบรรทัด</p>
+    <div id="messages" class="messages" aria-live="polite" style="margin-top:16px"></div>
+    <div style="margin-top:18px;display:flex;gap:8px;justify-content:center">
+      <button id="replayBtn" class="btn" style="background:#7c3aed">เล่นอีกครั้ง</button>
+      <button id="backBtn" class="btn" style="background:#6b7280">กลับหน้ากรอก</button>
+    </div>
+  </main>
 
 <script>
-  // กำหนดโค้ดพร้อมรหัสผ่านที่ผูกกับโค้ดนั้น ๆ
-  const availableCodes = {
-    "ชื่อโค้ด": "รหัสที่ได้",
-    "abc123": "passABC123",
-    "game999": "passGAME999"
-  };
+(function(){
+  // SECRET is stored here (not shown in UI). It will be matched after normalization.
+  const SECRET = '20/7/68';
 
-  // ดึงโค้ดที่ใช้ไปแล้วจาก localStorage
-  let usedCodes = JSON.parse(localStorage.getItem("usedCodes") || "[]");
+  // Messages to reveal (edit as needed)
+  const MESSAGES = [
+    "💖 รักนะที่สุดเลย 💖",
+    "✨ จะอยู่ด้วยกันตลอดไป ✨",
+    "🌹 ขอบคุณที่เป็นคนพิเศษของเรา 🌹",
+    "💕 ไม่มีวันไหนที่ไม่คิดถึงเธอ 💕",
+    "💫 เธอคือดวงดาวของชีวิตเรา 💫",
+    "🌈 เธอทำให้ทุกวันสดใส 🌈",
+    "🥰 ขอบคุณที่เข้ามาเติมเต็มหัวใจ 🥰",
+    "💍 สัญญาจะรักเธอคนเดียวตลอดไป 💍",
+    "🎶 เสียงหัวใจนี้เต้นเพื่อเธอเสมอ 🎶",
+    "🌸 ทุกช่วงเวลาที่มีกับเธอมีค่าเสมอ 🌸",
+    "🌻 เธอคือเหตุผลที่ยิ้มในทุกเช้า 🌻",
+    "🔥 รักเราจะไม่เคยจางหาย 🔥",
+    "💌 ข้อความนี้มาจากใจของฉัน เพื่อเธอเท่านั้น 💌",
+    "🌙 จนถึงดวงจันทร์และกลับมาอีกครั้ง 🌙",
+    "🌟 เธอคือความฝันที่เป็นจริงของฉัน 🌟",
+    "🌊 อยากพาเธอไปเที่ยวทุกที่บนโลกนี้ 🌊",
+    "🍀 โชคดีที่มีเธอในชีวิตนี้ 🍀",
+    "🌺 ทุกคำที่พูดออกมาคือความจริงทั้งหมด 🌺",
+    "🕊️ จะปกป้องเธอให้ปลอดภัยตลอดไป 🕊️",
+    "💞 แค่อยากให้เธอรู้ว่ารักมากแค่ไหน 💞"
+  ];
 
-  function isValidEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+  const gate = document.getElementById('gate');
+  const loading = document.getElementById('loading');
+  const reveal = document.getElementById('reveal');
+  const input = document.getElementById('codeInput');
+  const btn = document.getElementById('openBtn');
+  const err = document.getElementById('error');
+  const messagesWrap = document.getElementById('messages');
+  const progressBar = document.getElementById('progressBar');
+  const replayBtn = document.getElementById('replayBtn');
+  const backBtn = document.getElementById('backBtn');
+
+  let heartsInterval = null;
+  let confettiInterval = null;
+
+  // create ambient hearts
+  function createHeart(){
+    const h = document.createElement('div');
+    h.className = 'fx-heart';
+    h.textContent = Math.random() > 0.5 ? '❤' : '💖';
+    h.style.left = Math.random()*100 + 'vw';
+    h.style.fontSize = (12 + Math.random()*24) + 'px';
+    h.style.animationDuration = (4 + Math.random()*4) + 's';
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),9000);
   }
+  function startHearts(){ if(!heartsInterval) heartsInterval = setInterval(createHeart,420); }
+  function stopHearts(){ if(heartsInterval){ clearInterval(heartsInterval); heartsInterval = null; } }
 
-  function register() {
-    const email = document.getElementById("email").value.trim();
-    const pass = document.getElementById("password").value.trim();
-
-    if (!isValidEmail(email)) return alert("รูปแบบอีเมลไม่ถูกต้อง");
-    if (pass.length < 8) return alert("รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร");
-    if (!email || !pass) return alert("กรอกข้อมูลให้ครบ");
-
-    let users = JSON.parse(localStorage.getItem("users") || "{}");
-    if (users[email]) return alert("มีผู้ใช้งานนี้แล้ว");
-
-    users[email] = pass;
-    localStorage.setItem("users", JSON.stringify(users));
-    alert("สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบ");
+  // confetti effect
+  function createConfetti(){
+    for(let i=0;i<10;i++){
+      const c = document.createElement('div');
+      c.className = 'fx-confetti';
+      c.style.left = Math.random()*100 + 'vw';
+      c.style.width = (6 + Math.random()*8) + 'px';
+      c.style.height = (10 + Math.random()*12) + 'px';
+      c.style.transform = 'rotate(' + (Math.random()*360) + 'deg)';
+      c.style.animationDuration = (4 + Math.random()*4) + 's';
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),9000);
+    }
   }
+  function startConfetti(){ if(!confettiInterval) confettiInterval = setInterval(createConfetti,550); }
+  function stopConfetti(){ if(confettiInterval){ clearInterval(confettiInterval); confettiInterval = null; } }
 
-  function login() {
-    const email = document.getElementById("email").value.trim();
-    const pass = document.getElementById("password").value.trim();
-
-    if (!isValidEmail(email)) return alert("รูปแบบอีเมลไม่ถูกต้อง");
-    if (pass.length < 8) return alert("รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร");
-
-    let users = JSON.parse(localStorage.getItem("users") || "{}");
-    if (users[email] === pass) {
-      localStorage.setItem("currentUser", email);
-      showMain();
-    } else {
-      alert("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+  // burst
+  function burst(n=24){
+    for(let i=0;i<n;i++){
+      const s = document.createElement('span');
+      s.className = 'fx-burst';
+      s.textContent = '✦';
+      s.style.left = '50%'; s.style.top = '45%';
+      s.style.setProperty('--tx', (Math.random()*400-200) + 'px');
+      s.style.setProperty('--ty', (Math.random()*300-150) + 'px');
+      document.body.appendChild(s); setTimeout(()=>s.remove(),1200);
     }
   }
 
-  function logout() {
-    localStorage.removeItem("currentUser");
-    document.getElementById("main-section").classList.add("hidden");
-    document.getElementById("auth-section").classList.remove("hidden");
-    clearInputs();
-    clearCodeResult();
+  // normalize input codes such as 20-7-68, 20/07/2568 to form d/m/yy
+  function normalizeCode(s){
+    if(!s) return '';
+    s = String(s).trim();
+    s = s.replace(/\s+/g,'');
+    s = s.replace(/-/g,'/');
+    const parts = s.split('/');
+    if(parts.length < 3) return s.toLowerCase();
+    const d = parseInt(parts[0],10);
+    const m = parseInt(parts[1],10);
+    let y = parseInt(parts[2],10);
+    if(isNaN(d) || isNaN(m) || isNaN(y)) return s.toLowerCase();
+    y = y % 100;
+    return d + '/' + m + '/' + y;
   }
 
-  function showAuth() {
-    document.getElementById("auth-section").classList.remove("hidden");
-    document.getElementById("main-section").classList.add("hidden");
+  // UI helpers
+  function shakeCard(){
+    gate.classList.remove('shake');
+    void gate.offsetWidth;
+    gate.classList.add('shake');
+    setTimeout(()=>gate.classList.remove('shake'),520);
   }
 
-  function showMain() {
-    const email = localStorage.getItem("currentUser");
-    if (!email) {
-      alert("กรุณาเข้าสู่ระบบก่อน");
-      showAuth();
-      return;
-    }
-    document.getElementById("user-email").textContent = email;
-    document.getElementById("auth-section").classList.add("hidden");
-    document.getElementById("main-section").classList.remove("hidden");
-    clearInputs();
-    clearCodeResult();
-    renderHistory();
-  }
-
-  function clearInputs() {
-    document.getElementById("email").value = "";
-    document.getElementById("password").value = "";
-    document.getElementById("game-code").value = "";
-  }
-
-  function clearCodeResult() {
-    const cr = document.getElementById("code-result");
-    cr.textContent = "";
-    cr.classList.add("hidden");
-  }
-
-  // บันทึกประวัติการใช้โค้ด
-  function saveHistory(code) {
-    const email = localStorage.getItem("currentUser");
-    let history = JSON.parse(localStorage.getItem("history_" + email) || "[]");
-    history.push({ code: code, time: new Date().toLocaleString() });
-    localStorage.setItem("history_" + email, JSON.stringify(history));
-    renderHistory();
-  }
-
-  // แสดงประวัติ
-  function renderHistory() {
-    const email = localStorage.getItem("currentUser");
-    let history = JSON.parse(localStorage.getItem("history_" + email) || "[]");
-    const historyDiv = document.getElementById("history");
-    historyDiv.innerHTML = "";
-
-    if (history.length === 0) {
-      historyDiv.textContent = "ยังไม่มีการใช้โค้ด";
-      return;
-    }
-
-    history.forEach(item => {
-      const div = document.createElement("div");
-      div.className = "history-item";
-      div.textContent = `โค้ด: ${item.code} เวลา: ${item.time}`;
-      historyDiv.appendChild(div);
+  function revealAllMessages(){
+    messagesWrap.innerHTML = '';
+    let delay = 300;
+    stopHearts(); startConfetti();
+    MESSAGES.forEach((m,i)=>{
+      setTimeout(()=>{
+        const div = document.createElement('div');
+        div.className = 'msg show';
+        div.textContent = m;
+        messagesWrap.appendChild(div);
+        messagesWrap.scrollTop = messagesWrap.scrollHeight;
+        burst(14);
+      }, delay);
+      delay += 800;
     });
   }
 
-  function redeemCode() {
-    if (!localStorage.getItem("currentUser")) {
-      alert("กรุณาเข้าสู่ระบบก่อนใช้งานฟีเจอร์นี้");
-      showAuth();
+  // Start ambient hearts immediately
+  startHearts();
+
+  // Handle open click
+  function handleOpen(){
+    err.style.display='none'; err.textContent='';
+    const normInput = normalizeCode(input.value);
+    const normSecret = normalizeCode(SECRET);
+    if(normInput !== normSecret){
+      err.style.display='block'; err.textContent='รหัสไม่ถูกต้อง';
+      shakeCard();
       return;
     }
-    clearCodeResult();
-    const codeInput = document.getElementById("game-code");
-    const code = codeInput.value.trim().toLowerCase();
 
-    if (!code) return alert("กรุณากรอกโค้ด");
+    // correct: move to loading stage
+    gate.style.display = 'none';
+    loading.style.display = '';
+    progressBar.style.width = '0%';
 
-    if (!(code in availableCodes)) {
-      return alert("โค้ดไม่ถูกต้อง");
-    }
-    if (usedCodes.includes(code)) {
-      return alert("โค้ดนี้ถูกใช้ไปแล้ว");
-    }
+    // simulate loading progress (visual)
+    let p = 0;
+    const interval = setInterval(()=>{
+      p += 6 + Math.random()*10; // random increments
+      if(p >= 100) p = 100;
+      progressBar.style.width = p + '%';
+    }, 250);
 
-    usedCodes.push(code);
-    localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
-    saveHistory(code);
-
-    const email = localStorage.getItem("currentUser");
-    const passForCode = availableCodes[code];
-
-    const resultDiv = document.getElementById("code-result");
-    resultDiv.textContent = `ใช้โค้ดสำเร็จ!\nชื่อผู้ใช้: ${email}\nรหัสผ่าน: ${passForCode}`;
-    resultDiv.classList.remove("hidden");
-
-    codeInput.value = "";
+    // after a short loading, go to reveal page
+    setTimeout(()=>{
+      clearInterval(interval);
+      progressBar.style.width = '100%';
+      loading.style.display = 'none';
+      reveal.style.display = '';
+      // start confetti and reveal messages
+      revealAllMessages();
+    }, 2800); // adjust loading duration (ms) if desired
   }
 
-  // โหลดตอนเริ่ม
-  window.onload = () => {
-    if (localStorage.getItem("currentUser")) {
-      showMain();
-    } else {
-      showAuth();
-    }
-  };
-</script>
+  btn.addEventListener('click', handleOpen);
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter') handleOpen(); });
 
+  // replay and back
+  replayBtn.addEventListener('click', function(){
+    messagesWrap.innerHTML = '';
+    revealAllMessages();
+  });
+  backBtn.addEventListener('click', function(){
+    // stop confetti & show gate again
+    stopConfetti();
+    startHearts();
+    reveal.style.display = 'none';
+    gate.style.display = '';
+    input.value = '';
+    err.style.display = 'none';
+    messagesWrap.innerHTML = '';
+  });
+
+  // cleanup on unload
+  window.addEventListener('beforeunload', function(){ stopHearts(); stopConfetti(); });
+
+})();
+</script>
 </body>
 </html>
